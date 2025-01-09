@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap'); 
+    body {
+      text-align: center;
+      background-color: black;
+      color: white;
+      margin: 0;
+      overflow: hidden;
+    }
+    button {
+      font-family: 'VT323', cursive;
+      font-size: 1.5em;
+      background-color: black;
+      color: limegreen;
+      border: 2px solid limegreen;
+      padding: 10px 20px;
+      margin: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: limegreen;
+      color: black;
+    }
+    canvas {
+      background: radial-gradient(circle, #5200aa, #111);
+      background-size: cover;
+      display: block;
+      margin: auto;
+      border: 2px solid limegreen;
+    }

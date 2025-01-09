@@ -19,7 +19,7 @@ const keys = {}; // Object to store the keys pressed
 const bullets = [];
 const bulletSpeed = 5;
 let canShoot = true; // Variable to control the shooting rate
-const shootRate = 100; // Time between shots in milliseconds
+const shootRate = 250; // Time between shots in milliseconds
 
 window.addEventListener('keydown', (event) => {
     keys[event.key] = true;  // Change the value to true when the key is pressed
@@ -60,7 +60,7 @@ function moveBullets() {
 
                 asteroids.splice(j, 1); // Remove the asteroid
 
-                if (bullets[i]) {
+                if (bullets[i] && bullets[i].y > 0) {
                     bullets.splice(i, 1); // Remove the bullet
                 }
                 break; // Break the loop to prevent checking for collisions with other asteroids
@@ -96,6 +96,8 @@ const asteroids = [];
 const spawnRate = 1000; // Time between asteroid spawns in milliseconds
 
 function spawnAsteroid() {
+    if (isGameOver) return;
+
     asteroids.push({
         x: Math.random() * (canvas.width - 50), // Random x position
         y: -50, // Start above the screen
@@ -167,12 +169,55 @@ function drawExplosions() {
     }
 }
 
+function checkPlayerCollision() {
+    for (let i = 0; i < asteroids.length; i++) {
+        if (checkCollision(player, asteroids[i])) {
+            explode(player.x + player.width / 2, player.y + player.height / 2);
+            gameOver();
+            return true;
+        }
+    }
+    return false;
+}
+
+let isGameOver = false;
+
+function gameOver() {
+    isGameOver = true;
+    ctx.fillStyle = 'orange';
+    ctx.font = '48px VT323, cursive';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2);
+
+    setTimeout(() => {
+        const restartButton = document.createElement('button');
+        restartButton.innerText = 'Restart';
+        restartButton.style.position = 'absolute';
+        restartButton.style.left = "50%";
+        restartButton.style.top = "60%";
+        restartButton.style.transform = "translate(-50%, -50%)";
+        restartButton.style.padding = "10px 20px";
+        restartButton.style.fontSize = "24px";
+        document.body.appendChild(restartButton);
+        restartButton.focus();
+
+        restartButton.addEventListener('click', () => {
+            location.reload();
+        });
+    }, 1000);
+}
+
 function gameLoop() {
+    if (isGameOver) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.font = '48px VT323, cursive';
     
     movePlayer(); // Move the player
     moveBullets(); // Move the bullets
     moveAsteroids(); // Move the asteroids
+    checkPlayerCollision(); // Check for player collision
 
     if (keys[' '] && canShoot) {
         shootBullet();
